@@ -24,6 +24,39 @@ export const contentApi = {
   /** GET /api/v1/content/:id */
   getContent: (videoId) => request(`/content/${videoId}`),
 
+  /** GET /api/v1/channel-profile */
+  getChannelProfile: () => request('/channel-profile'),
+
+  /** PUT /api/v1/channel-profile */
+  updateChannelProfile: (payload = {}) =>
+    request('/channel-profile', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  /** GET /api/v1/channel-profiles */
+  getChannelProfiles: () => request('/channel-profiles'),
+
+  /** POST /api/v1/channel-profiles */
+  createChannelProfile: (payload = {}) =>
+    request('/channel-profiles', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  /** PUT /api/v1/channel-profiles/:id */
+  updateChannelProfileById: (id, payload = {}) =>
+    request(`/channel-profiles/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  /** DELETE /api/v1/channel-profiles/:id */
+  deleteChannelProfile: (id) =>
+    request(`/channel-profiles/${id}`, {
+      method: 'DELETE',
+    }),
+
   /** POST /api/v1/generate */
   generate: (params = {}) =>
     request('/generate', {
@@ -31,6 +64,8 @@ export const contentApi = {
       body: JSON.stringify({
         category: params.category || null,
         num_topics: params.numTopics || 5,
+        script_type: params.scriptType || 'descriptive',
+        channel_profile_id: params.channelProfileId || null,
       }),
     }),
 
@@ -39,6 +74,8 @@ export const contentApi = {
     const url = new URL(`${BASE_URL}/generate/stream`, window.location.origin);
     if (params.category) url.searchParams.append('category', params.category);
     url.searchParams.append('num_topics', params.numTopics || 5);
+    url.searchParams.append('script_type', params.scriptType || 'descriptive');
+    if (params.channelProfileId) url.searchParams.append('channel_profile_id', params.channelProfileId);
 
     const eventSource = new EventSource(url.toString());
 
@@ -67,4 +104,3 @@ export const contentApi = {
     return () => eventSource.close();
   },
 };
-

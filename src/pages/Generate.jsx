@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { contentApi } from '../api/content';
 import GeneratePanel from '../components/GeneratePanel';
 
@@ -36,14 +36,20 @@ export default function Generate() {
           'save_to_database': 'saving'
         };
         
+        if (msg.step === 'log') {
+          // Add detailed thinking logs
+          setLogs(prev => [...prev.slice(-12), msg.message]);
+          return;
+        }
+
         if (nodeToStep[msg.step]) {
           setActiveStep(nodeToStep[msg.step]);
+          setLogs(prev => [...prev.slice(-12), `[STAGING] Moving to ${nodeToStep[msg.step]}...`]);
         }
-        
-        setLogs(prev => [...prev.slice(-4), `Task ${msg.step} completed.`]);
       },
       (err) => {
         setError(err);
+        setLogs(prev => [...prev, `[ERROR] ${err}`]);
         setIsLoading(false);
       },
       (data) => {

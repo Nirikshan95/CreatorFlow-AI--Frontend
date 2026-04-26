@@ -89,6 +89,7 @@
   transition: all var(--transition);
   cursor: pointer;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .sidebar-link:hover {
@@ -103,9 +104,12 @@
 }
 
 .sidebar-link-icon {
-  font-size: 1rem;
-  width: 20px;
+  font-size: 0.72rem;
+  width: 24px;
+  flex-shrink: 0;
   text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* ── Stat Cards ────────────────────────────────────────────────── */

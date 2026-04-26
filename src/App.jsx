@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Generate from './pages/Generate';
 import History from './pages/History';
 import ContentDetailPage from './pages/ContentDetailPage';
+import ChannelProfiles from './pages/ChannelProfiles';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Routes>
             <Route path="/"             element={<Dashboard />}        />
             <Route path="/generate"     element={<Generate />}         />
+            <Route path="/channel-profiles" element={<ChannelProfiles />} />
             <Route path="/history"      element={<History />}          />
             <Route path="/content/:id"  element={<ContentDetailPage />} />
           </Routes>

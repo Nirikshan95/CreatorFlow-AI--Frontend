@@ -4,11 +4,11 @@ import { contentApi } from '../api/content';
 import ContentDetail from '../components/ContentDetail';
 
 export default function ContentDetailPage() {
-  const { id }  = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!id) return;
@@ -21,13 +21,12 @@ export default function ContentDetailPage() {
 
   return (
     <div className="fade-in">
-      {/* Back button */}
       <button
         className="btn btn-ghost btn-sm"
         style={{ marginBottom: 20 }}
         onClick={() => navigate(-1)}
       >
-        ← Back
+        &lt; Back
       </button>
 
       {loading && (

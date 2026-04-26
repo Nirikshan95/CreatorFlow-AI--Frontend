@@ -30,7 +30,7 @@ export default function ContentCard({ item }) {
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/content/${item.video_id}`)}
     >
       <div className="content-card-top">
-        <div className="content-card-title">{item.title || '—'}</div>
+        <div className="content-card-title">{item.title || '-'}</div>
         <span className={`badge badge-${cat}`}>
           {CATEGORY_LABELS[cat] || cat}
         </span>
@@ -39,8 +39,8 @@ export default function ContentCard({ item }) {
       <div className="content-card-topic">{item.topic}</div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-        <ScoreBar label="Novelty"   value={item.novelty_score}  type="novelty"   />
-        <ScoreBar label="Virality"  value={item.virality_score} type="virality"  />
+        <ScoreBar label="Novelty" value={item.novelty_score} type="novelty" />
+        <ScoreBar label="Virality" value={item.virality_score} type="virality" />
       </div>
 
       <div className="content-card-footer">
