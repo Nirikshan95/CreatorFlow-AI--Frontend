@@ -28,7 +28,7 @@ const TAB_CONFIG = {
   },
 };
 
-const TABS = Object.entries(TAB_CONFIG).map(([key, config]) => ({
+const ALL_TABS = Object.entries(TAB_CONFIG).map(([key, config]) => ({
   key,
   label: config.label,
 }));
@@ -443,7 +443,6 @@ function QualityView({ critique }) {
 export default function ContentDetail({ content }) {
   const [activeTab, setActiveTab] = useState('script');
   const cat = content?.category || 'general';
-  const activeTabHelper = TAB_CONFIG[activeTab]?.helper;
 
   const scriptText = normalizeScript(content?.script_data);
   const seo = normalizeSeo(content);
@@ -451,6 +450,12 @@ export default function ContentDetail({ content }) {
   const thumbnailPrompt = normalizeThumbnailPrompt(content);
   const distributionSuggestions = normalizeDistribution(content);
   const qualityAssessment = parseMaybeJson(content?.quality_assessment);
+  const hasQualityAssessment = !!qualityAssessment && !isEmptyObject(qualityAssessment);
+  const tabs = hasQualityAssessment
+    ? ALL_TABS
+    : ALL_TABS.filter((tab) => tab.key !== 'quality');
+  const effectiveActiveTab = tabs.some((tab) => tab.key === activeTab) ? activeTab : 'script';
+  const activeTabHelper = TAB_CONFIG[effectiveActiveTab]?.helper;
 
   if (!content) {
     return <div className="empty-state"><div className="empty-state-icon">Search</div><p>No content to display.</p></div>;
@@ -488,10 +493,10 @@ export default function ContentDetail({ content }) {
 
       <div className="detail-body">
         <div className="tabs-bar">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.key}
-              className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
+              className={`tab-btn ${effectiveActiveTab === tab.key ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.key)}
             >
               {tab.label}
@@ -503,12 +508,12 @@ export default function ContentDetail({ content }) {
         </div>
 
         <div className="card tab-content">
-          {activeTab === 'script' && <ScriptView script={scriptText} />}
-          {activeTab === 'seo' && <SEOView seo={seo} />}
-          {activeTab === 'post_creation' && <PostCreationView postCreation={postCreation} />}
-          {activeTab === 'thumbnail' && <ThumbnailView prompt={thumbnailPrompt} />}
-          {activeTab === 'distribution' && <DistributionView suggestions={distributionSuggestions} />}
-          {activeTab === 'quality' && <QualityView critique={qualityAssessment} />}
+          {effectiveActiveTab === 'script' && <ScriptView script={scriptText} />}
+          {effectiveActiveTab === 'seo' && <SEOView seo={seo} />}
+          {effectiveActiveTab === 'post_creation' && <PostCreationView postCreation={postCreation} />}
+          {effectiveActiveTab === 'thumbnail' && <ThumbnailView prompt={thumbnailPrompt} />}
+          {effectiveActiveTab === 'distribution' && <DistributionView suggestions={distributionSuggestions} />}
+          {effectiveActiveTab === 'quality' && <QualityView critique={qualityAssessment} />}
         </div>
       </div>
     </div>

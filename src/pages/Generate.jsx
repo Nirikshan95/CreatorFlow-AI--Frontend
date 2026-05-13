@@ -43,7 +43,6 @@ export default function Generate() {
           'generate_seo': 'seo',
           'generate_content': 'content',
           'generate_post_image': 'content',
-          'critique_content': 'content',
           'assemble_final_content': 'marketing',
           'save_to_database': 'saving'
         };

@@ -6,7 +6,7 @@ const STEPS = [
   { key: 'select', label: 'Running quality checks...', icon: 'Target' },
   { key: 'script', label: 'Generating video narrative...', icon: 'Script' },
   { key: 'seo', label: 'Optimizing for search intent...', icon: 'SEO' },
-  { key: 'content', label: 'Performing AI quality review...', icon: 'Review' },
+  { key: 'content', label: 'Generating post, thumbnail and prompt assets...', icon: 'Review' },
   { key: 'marketing', label: 'Assembling distribution plan...', icon: 'Plan' },
   { key: 'saving', label: 'Saving to content memory...', icon: 'Save' },
 ];
