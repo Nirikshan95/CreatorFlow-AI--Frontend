@@ -358,12 +358,48 @@ function DistributionView({ suggestions }) {
     return <div className="opacity-60">No distribution suggestions generated.</div>;
   }
 
+  // Handle case where LLM might return a single long string containing line breaks or numbered points
+  const processedSuggestions = [];
+  suggestions.forEach((suggestion) => {
+    if (typeof suggestion === 'string' && (suggestion.includes('\n') || suggestion.match(/^\d+\./m))) {
+      const split = suggestion.split(/\n+/).filter(Boolean);
+      split.forEach((s) => {
+        const cleaned = s.replace(/^[\d.\-*]+\s*/, '').trim();
+        if (cleaned) {
+          processedSuggestions.push(cleaned);
+        }
+      });
+    } else {
+      processedSuggestions.push(suggestion.replace(/^[\d.\-*]+\s*/, '').trim());
+    }
+  });
+
   return (
-    <ul style={{ margin: 0, paddingLeft: 20 }}>
-      {suggestions.map((item, index) => (
-        <li key={index} style={{ marginBottom: 10 }}>{item}</li>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {processedSuggestions.map((item, index) => (
+        <div key={index} className="card" style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', gap: '12px' }}>
+             <div style={{ 
+               background: 'var(--accent-primary)', 
+               color: '#fff', 
+               width: '28px', 
+               height: '28px', 
+               borderRadius: '50%', 
+               display: 'flex', 
+               alignItems: 'center', 
+               justifyContent: 'center',
+               fontWeight: 'bold',
+               flexShrink: 0
+             }}>
+               {index + 1}
+             </div>
+             <div style={{ lineHeight: 1.5, marginTop: '2px' }}>
+               {item}
+             </div>
+          </div>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 

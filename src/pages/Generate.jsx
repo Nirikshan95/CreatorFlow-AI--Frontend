@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { contentApi } from '../api/content';
 import GeneratePanel from '../components/GeneratePanel';
 
@@ -10,6 +10,17 @@ export default function Generate() {
   const [result,     setResult]     = useState(null);
   const [error,      setError]      = useState(null);
   const [logs,       setLogs]       = useState([]);
+  const [memorySummary, setMemorySummary] = useState('');
+
+  useEffect(() => {
+    contentApi.getPastTopicsSummary()
+      .then((data) => {
+        setMemorySummary(String(data?.summary || '').trim());
+      })
+      .catch(() => {
+        setMemorySummary('');
+      });
+  }, []);
 
 
   function handleGenerate(params) {
@@ -31,6 +42,7 @@ export default function Generate() {
           'validate_script': 'script',
           'generate_seo': 'seo',
           'generate_content': 'content',
+          'generate_post_image': 'content',
           'critique_content': 'content',
           'assemble_final_content': 'marketing',
           'save_to_database': 'saving'
@@ -39,6 +51,14 @@ export default function Generate() {
         if (msg.step === 'log') {
           // Add detailed thinking logs
           setLogs(prev => [...prev.slice(-12), msg.message]);
+          return;
+        }
+        if (msg.step === 'memory_summary') {
+          const summary = String(msg.summary || '').trim();
+          if (summary) {
+            setMemorySummary(summary);
+            setLogs(prev => [...prev.slice(-12), 'Compact memory summary prepared for topic generation.']);
+          }
           return;
         }
 
@@ -54,6 +74,7 @@ export default function Generate() {
       },
       (data) => {
         setResult(data);
+        setMemorySummary(String(data?.past_topics_summary || memorySummary || '').trim());
         setIsLoading(false);
         setActiveStep(null);
       }
@@ -70,6 +91,7 @@ export default function Generate() {
         result={result}
         error={error}
         logs={logs}
+        memorySummary={memorySummary}
       />
 
     </div>

@@ -21,6 +21,9 @@ export const contentApi = {
   /** GET /api/v1/past-topics */
   getPastTopics: () => request('/past-topics'),
 
+  /** GET /api/v1/past-topics-summary */
+  getPastTopicsSummary: () => request('/past-topics-summary'),
+
   /** GET /api/v1/content/:id */
   getContent: (videoId) => request(`/content/${videoId}`),
 

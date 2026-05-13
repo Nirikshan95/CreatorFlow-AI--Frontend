@@ -25,7 +25,7 @@ const SCRIPT_TYPES = [
   { value: 'educational', label: 'Educational' },
 ];
 
-export default function GeneratePanel({ onGenerate, isLoading, activeStep, result, error, logs = [] }) {
+export default function GeneratePanel({ onGenerate, isLoading, activeStep, result, error, logs = [], memorySummary = '' }) {
   const [category, setCategory] = useState('');
   const [numTopics, setNumTopics] = useState(5);
   const [scriptType, setScriptType] = useState('descriptive');
@@ -214,6 +214,12 @@ export default function GeneratePanel({ onGenerate, isLoading, activeStep, resul
           {isLoading ? (<><span className="spinner" /> Generating...</>) : (<>Generate Content</>)}
         </button>
       </form>
+      {memorySummary && (
+        <div style={{ marginTop: 14, fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+          <strong>Memory Summary Used for Topic Generation:</strong>
+          <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', opacity: 0.9 }}>{memorySummary}</div>
+        </div>
+      )}
 
       <div style={{ marginTop: isLoading ? '40px' : '0', borderTop: isLoading ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingTop: isLoading ? '40px' : '0' }}>
         {isLoading && (
@@ -391,6 +397,12 @@ export default function GeneratePanel({ onGenerate, isLoading, activeStep, resul
           <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
             <strong>Title:</strong> {result.title}
           </div>
+          {result.past_topics_summary && (
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
+              <strong>Memory Summary:</strong>
+              <div style={{ marginTop: 6, whiteSpace: 'pre-wrap' }}>{result.past_topics_summary}</div>
+            </div>
+          )}
           <a href={`/content/${result.video_id}`} className="btn btn-primary btn-sm" style={{ display: 'inline-flex' }}>
             View Full Content
           </a>
