@@ -414,6 +414,8 @@
 .tab-content {
   padding: 24px;
   animation: fadeIn 0.3s ease;
+  overflow-y: auto;                        /* allow internal scroll */
+  max-height: calc(100vh - 280px);         /* reserve space for header + tabs */
 }
 
 /* Script sections */

@@ -22,10 +22,6 @@ const TAB_CONFIG = {
     label: 'Distribution Strategy',
     helper: 'Structured list of individual promotion suggestions.',
   },
-  quality: {
-    label: 'Quality Assessment',
-    helper: 'Final quality review and improvement guidance.',
-  },
 };
 
 const ALL_TABS = Object.entries(TAB_CONFIG).map(([key, config]) => ({
@@ -85,6 +81,19 @@ function firstNonEmptyValue(candidates) {
 }
 
 function normalizeScript(scriptData) {
+  if (scriptData == null) return '';
+  // If it's already a plain string, use it directly
+  if (typeof scriptData === 'string') {
+    const trimmed = scriptData.trim();
+    // Handle JSON-encoded string: "\"actual text\""
+    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+      try {
+        const unquoted = JSON.parse(trimmed);
+        if (typeof unquoted === 'string') return unquoted.trim();
+      } catch { /* fall through */ }
+    }
+    return trimmed;
+  }
   const parsed = parseMaybeJson(scriptData);
   return typeof parsed === 'string' ? parsed.trim() : '';
 }
@@ -233,11 +242,11 @@ function ScriptView({ script }) {
   if (!script) return <div className="opacity-60">No script available.</div>;
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0 }}>
+    <div style={{ position: 'relative', maxHeight: '65vh', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <CopyBtn text={script} />
       </div>
-      <div className="script-section-content" style={{ whiteSpace: 'pre-wrap', paddingTop: 36 }}>{script}</div>
+      <div className="script-section-content">{script}</div>
     </div>
   );
 }
@@ -403,42 +412,6 @@ function DistributionView({ suggestions }) {
   );
 }
 
-function QualityView({ critique }) {
-  if (!critique || isEmptyObject(critique)) return <div className="opacity-60">No quality review available for this content.</div>;
-
-  const rating = critique.rating || 0;
-  const color = rating >= 7 ? 'var(--novelty-color)' : rating >= 4 ? 'var(--virality-color)' : 'var(--error-color)';
-
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <div className="detail-section-title" style={{ margin: 0 }}>Quality Score</div>
-          <p className="text-sm opacity-60">Final critic assessment for this content</p>
-        </div>
-        <div className="rating-badge" style={{ background: color, color: '#fff', padding: '10px 20px', borderRadius: 12, fontWeight: 700, fontSize: '1.2rem' }}>
-          {rating.toFixed(1)}/10
-        </div>
-      </div>
-
-      <div className="card mb-6" style={{ background: 'rgba(255,255,255,0.03)', padding: 20 }}>
-        <strong style={{ display: 'block', marginBottom: 8, color: 'var(--novelty-color)' }}>Feedback:</strong>
-        <p style={{ lineHeight: 1.6 }}>{critique.feedback || 'No feedback generated.'}</p>
-      </div>
-
-      {Array.isArray(critique.suggestions) && critique.suggestions.length > 0 && (
-        <div className="suggestions-section">
-          <div className="detail-section-title">Suggestions</div>
-          <ul style={{ margin: 0, paddingLeft: 20 }}>
-            {critique.suggestions.map((s, i) => (
-              <li key={i} style={{ marginBottom: 8 }}>{s}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function ContentDetail({ content }) {
   const [activeTab, setActiveTab] = useState('script');
@@ -450,10 +423,8 @@ export default function ContentDetail({ content }) {
   const thumbnailPrompt = normalizeThumbnailPrompt(content);
   const distributionSuggestions = normalizeDistribution(content);
   const qualityAssessment = parseMaybeJson(content?.quality_assessment);
-  const hasQualityAssessment = !!qualityAssessment && !isEmptyObject(qualityAssessment);
-  const tabs = hasQualityAssessment
-    ? ALL_TABS
-    : ALL_TABS.filter((tab) => tab.key !== 'quality');
+  const hasQualityAssessment = false; // CriticAgent is disabled; tab is permanently hidden
+  const tabs = ALL_TABS;
   const effectiveActiveTab = tabs.some((tab) => tab.key === activeTab) ? activeTab : 'script';
   const activeTabHelper = TAB_CONFIG[effectiveActiveTab]?.helper;
 
@@ -513,7 +484,6 @@ export default function ContentDetail({ content }) {
           {effectiveActiveTab === 'post_creation' && <PostCreationView postCreation={postCreation} />}
           {effectiveActiveTab === 'thumbnail' && <ThumbnailView prompt={thumbnailPrompt} />}
           {effectiveActiveTab === 'distribution' && <DistributionView suggestions={distributionSuggestions} />}
-          {effectiveActiveTab === 'quality' && <QualityView critique={qualityAssessment} />}
         </div>
       </div>
     </div>

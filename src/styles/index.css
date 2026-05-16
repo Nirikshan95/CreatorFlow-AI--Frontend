@@ -116,6 +116,7 @@ ul, ol { list-style: none; }
   grid-row: 2;
   padding: 32px;
   overflow-y: auto;
+  height: calc(100vh - var(--navbar-h));   /* bound the scroll container */
 }
 
 /* ── Glassmorphism Card ────────────────────────────────────────── */

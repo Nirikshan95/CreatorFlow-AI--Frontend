@@ -88,8 +88,8 @@ export default function GeneratePanel({ onGenerate, isLoading, activeStep, resul
   const stepIndex = STEPS.findIndex((s) => s.key === activeStep);
   const currentStepLabel = stepIndex !== -1 ? STEPS[stepIndex].label : 'Initializing...';
 
-  // Auto-scroll logic for terminal
-  const terminalRef = useEffect(() => {
+  // Auto-scroll terminal to bottom whenever new logs arrive
+  useEffect(() => {
     const el = document.getElementById('terminal-content');
     if (el) el.scrollTop = el.scrollHeight;
   }, [logs]);
